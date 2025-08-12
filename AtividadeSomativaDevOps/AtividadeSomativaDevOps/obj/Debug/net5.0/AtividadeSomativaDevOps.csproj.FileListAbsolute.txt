@@ -1,0 +1,16 @@
+C:\Users\gesie\source\repos\AtividadeSomativaDevOps\AtividadeSomativaDevOps\bin\Debug\net5.0\AtividadeSomativaDevOps.exe
+C:\Users\gesie\source\repos\AtividadeSomativaDevOps\AtividadeSomativaDevOps\bin\Debug\net5.0\AtividadeSomativaDevOps.deps.json
+C:\Users\gesie\source\repos\AtividadeSomativaDevOps\AtividadeSomativaDevOps\bin\Debug\net5.0\AtividadeSomativaDevOps.runtimeconfig.json
+C:\Users\gesie\source\repos\AtividadeSomativaDevOps\AtividadeSomativaDevOps\bin\Debug\net5.0\AtividadeSomativaDevOps.runtimeconfig.dev.json
+C:\Users\gesie\source\repos\AtividadeSomativaDevOps\AtividadeSomativaDevOps\bin\Debug\net5.0\AtividadeSomativaDevOps.dll
+C:\Users\gesie\source\repos\AtividadeSomativaDevOps\AtividadeSomativaDevOps\bin\Debug\net5.0\ref\AtividadeSomativaDevOps.dll
+C:\Users\gesie\source\repos\AtividadeSomativaDevOps\AtividadeSomativaDevOps\bin\Debug\net5.0\AtividadeSomativaDevOps.pdb
+C:\Users\gesie\source\repos\AtividadeSomativaDevOps\AtividadeSomativaDevOps\obj\Debug\net5.0\AtividadeSomativaDevOps.csproj.AssemblyReference.cache
+C:\Users\gesie\source\repos\AtividadeSomativaDevOps\AtividadeSomativaDevOps\obj\Debug\net5.0\AtividadeSomativaDevOps.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\gesie\source\repos\AtividadeSomativaDevOps\AtividadeSomativaDevOps\obj\Debug\net5.0\AtividadeSomativaDevOps.AssemblyInfoInputs.cache
+C:\Users\gesie\source\repos\AtividadeSomativaDevOps\AtividadeSomativaDevOps\obj\Debug\net5.0\AtividadeSomativaDevOps.AssemblyInfo.cs
+C:\Users\gesie\source\repos\AtividadeSomativaDevOps\AtividadeSomativaDevOps\obj\Debug\net5.0\AtividadeSomativaDevOps.csproj.CoreCompileInputs.cache
+C:\Users\gesie\source\repos\AtividadeSomativaDevOps\AtividadeSomativaDevOps\obj\Debug\net5.0\AtividadeSomativaDevOps.dll
+C:\Users\gesie\source\repos\AtividadeSomativaDevOps\AtividadeSomativaDevOps\obj\Debug\net5.0\ref\AtividadeSomativaDevOps.dll
+C:\Users\gesie\source\repos\AtividadeSomativaDevOps\AtividadeSomativaDevOps\obj\Debug\net5.0\AtividadeSomativaDevOps.pdb
+C:\Users\gesie\source\repos\AtividadeSomativaDevOps\AtividadeSomativaDevOps\obj\Debug\net5.0\AtividadeSomativaDevOps.genruntimeconfig.cache
