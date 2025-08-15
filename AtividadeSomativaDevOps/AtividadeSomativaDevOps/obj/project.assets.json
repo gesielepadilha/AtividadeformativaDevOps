@@ -14,11 +14,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\gesie\\source\\repos\\AtividadeSomativaDevOps\\AtividadeSomativaDevOps\\AtividadeSomativaDevOps.csproj",
+      "projectUniqueName": "C:\\Users\\gesie\\OneDrive\\Documentos\\Git\\AtividadeformativaDevOps\\AtividadeSomativaDevOps\\AtividadeSomativaDevOps\\AtividadeSomativaDevOps.csproj",
       "projectName": "AtividadeSomativaDevOps",
-      "projectPath": "C:\\Users\\gesie\\source\\repos\\AtividadeSomativaDevOps\\AtividadeSomativaDevOps\\AtividadeSomativaDevOps.csproj",
+      "projectPath": "C:\\Users\\gesie\\OneDrive\\Documentos\\Git\\AtividadeformativaDevOps\\AtividadeSomativaDevOps\\AtividadeSomativaDevOps\\AtividadeSomativaDevOps.csproj",
       "packagesPath": "C:\\Users\\gesie\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\gesie\\source\\repos\\AtividadeSomativaDevOps\\AtividadeSomativaDevOps\\obj\\",
+      "outputPath": "C:\\Users\\gesie\\OneDrive\\Documentos\\Git\\AtividadeformativaDevOps\\AtividadeSomativaDevOps\\AtividadeSomativaDevOps\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"

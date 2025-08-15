@@ -8,6 +8,7 @@ namespace AtividadeSomativaDevOps
         {
             Console.WriteLine("Testando a Formativa de DevOps!");
 
+            Console.WriteLine("Commmit 02");
         }
     }
 }
