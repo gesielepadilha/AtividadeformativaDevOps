@@ -11,6 +11,7 @@ namespace AtividadeSomativaDevOps
             Console.WriteLine("Commmit 02");
             Console.WriteLine("Commmit 03");
             Console.WriteLine("Commmit 04");
+            Console.WriteLine("Commmit 05");
         }
     }
 }
