@@ -8,43 +8,41 @@ on:
 
 jobs:
   build:
-
-    strategy:
-      matrix:
-        configuration: [Debug, Release]
-
-    runs-on: windows-latest  # pode ser ubuntu-latest também se não houver dependência de Windows
-
-    env:
-      Solution_Name: AtividadeSomativaDevOps/AtividadeSomativaDevOps.sln    
-     
+    runs-on: windows-latest
 
     steps:
     - name: Checkout
       uses: actions/checkout@v4
-      with:
-        fetch-depth: 0
 
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: 5.0.x
 
-   
     - name: Restore dependencies
-      run: dotnet restore $env:Solution_Name
+      run: dotnet restore AtividadeSomativaDevOps/AtividadeSomativaDevOps.sln
 
-    # Compilar a aplicação
     - name: Build
-      run: dotnet build $env:Solution_Name --configuration ${{ matrix.configuration }} --no-restore
+      run: dotnet build AtividadeSomativaDevOps/AtividadeSomativaDevOps.sln --configuration Release --no-restore
 
-    # Publicar binários (gera executável pronto para distribuição)
+  deploy:
+    runs-on: windows-latest
+    needs: build   # garante que só roda depois do build
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 5.0.x
+
     - name: Publish
-      run: dotnet publish $env:Solution_Name --configuration ${{ matrix.configuration }} --output ./publish
+      run: dotnet publish AtividadeSomativaDevOps/AtividadeSomativaDevOps.sln --configuration Release --output ./publish
 
-    # Upload do build como artefato do workflow
     - name: Upload build artifacts
       uses: actions/upload-artifact@v4
       with:
-        name: ConsoleApp-${{ matrix.configuration }}
+        name: ConsoleApp
         path: ./publish
