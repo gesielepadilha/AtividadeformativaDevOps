@@ -1,0 +1,50 @@
+name: .NET Console App
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+
+    strategy:
+      matrix:
+        configuration: [Debug, Release]
+
+    runs-on: windows-latest  # pode ser ubuntu-latest também se não houver dependência de Windows
+
+    env:
+      Solution_Name: AtividadeSomativaDevOps.sln      
+     
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 5.0.x
+
+   
+    - name: Restore dependencies
+      run: dotnet restore $env:Solution_Name
+
+    # Compilar a aplicação
+    - name: Build
+      run: dotnet build $env:Solution_Name --configuration ${{ matrix.configuration }} --no-restore
+
+    # Publicar binários (gera executável pronto para distribuição)
+    - name: Publish
+      run: dotnet publish $env:Solution_Name --configuration ${{ matrix.configuration }} --output ./publish
+
+    # Upload do build como artefato do workflow
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: ConsoleApp-${{ matrix.configuration }}
+        path: ./publish
