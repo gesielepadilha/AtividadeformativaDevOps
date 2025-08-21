@@ -16,7 +16,7 @@ jobs:
     runs-on: windows-latest  # pode ser ubuntu-latest também se não houver dependência de Windows
 
     env:
-      Solution_Name: AtividadeSomativaDevOps.sln      
+      Solution_Name: AtividadeSomativaDevOps/AtividadeSomativaDevOps.sln    
      
 
     steps:
