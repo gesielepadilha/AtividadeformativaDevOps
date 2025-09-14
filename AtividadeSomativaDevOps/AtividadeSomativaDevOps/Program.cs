@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 
 namespace AtividadeSomativaDevOps
 {
@@ -12,7 +13,13 @@ namespace AtividadeSomativaDevOps
             Console.WriteLine("Commmit 03");
             Console.WriteLine("Commmit 04");
             Console.WriteLine("Commmit 05");
-            Console.ReadKey();
+
+        
+            while (true)
+            {
+                Console.WriteLine("Container rodando... " + DateTime.Now);
+                Thread.Sleep(5000); 
+            }
         }
     }
 }
