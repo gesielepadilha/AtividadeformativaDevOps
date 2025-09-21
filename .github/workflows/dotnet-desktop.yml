@@ -81,7 +81,7 @@ jobs:
     - name: Send Discord Notification
       uses: Ilshidur/action-discord@master
       with:
-        webhook: ${{ secrets.DISCORD }}
+        webhook: ${{ secrets.DISCORD_WEBHOOK }}
         args: |
           **Status do Workflow:** ${{ job.status }}
           **Repositório:** ${{ github.repository }}
