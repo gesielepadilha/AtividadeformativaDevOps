@@ -26,6 +26,16 @@ jobs:
     - name: Build
       run: dotnet build AtividadeSomativaDevOps/AtividadeSomativaDevOps.sln --configuration Release --no-restore
 
+    - name: Run Tests
+      run: dotnet test AtividadeSomativaDevOps/AtividadeSomativaDevOps.sln --configuration Release --no-build --logger "trx;LogFileName=test-results.trx"
+
+    - name: Upload Test Results
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: test-results
+        path: '**/TestResults/*.trx'
+
   deploy:
     runs-on: windows-latest
     needs: build
@@ -66,15 +76,20 @@ jobs:
       uses: docker/build-push-action@v6
       with:
         context: .
-  git:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Run Discord Webhook
-        uses: johnnyhuy/actions-discord-git-webhook@main
-        with:
-          webhook_url: ${{ secrets.DISCORD_WEBHOOK }}
-        file: ./Dockerfile
         push: true
         tags: ${{ secrets.DOCKER_USERNAME }}/atividade-somativa:latest
+
+  discord:
+    runs-on: ubuntu-latest
+    needs: [build, deploy, docker]
+
+    steps:
+    - name: Send Discord Notification
+      uses: Ilshidur/action-discord@master
+      with:
+        webhook: ${{ secrets.DISCORD_WEBHOOK }}
+        args: |
+          🚀 Workflow finalizado!
+          Build, Testes, Deploy e Docker executados.
+          Branch: ${{ github.ref }}
+          Commit: ${{ github.sha }}
