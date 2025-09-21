@@ -83,7 +83,7 @@ jobs:
       with:
         webhook: ${{ secrets.DISCORD_WEBHOOK }}
         args: |
-          **Status do Workflow:** ${{ job.status }}
-          **Repositório:** ${{ github.repository }}
-          **Branch:** ${{ github.ref_name }}
-          **Commit:** ${{ github.sha }}
+          Status do Workflow: ${{ needs.build.result }}
+          Repositório: ${{ github.repository }}
+          Branch: ${{ github.ref_name }}
+          Commit: ${{ github.sha }}
