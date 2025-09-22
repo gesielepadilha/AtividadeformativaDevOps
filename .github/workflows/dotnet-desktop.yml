@@ -63,9 +63,10 @@ jobs:
 
       - name: Parse Test Results and Set Outputs
         id: set-outputs
+        shell: bash
         run: |
-          passed=$(grep -oP 'outcome="Passed"' ./TestResults/**/*.trx | wc -l)
-          failed=$(grep -oP 'outcome="Failed"' ./TestResults/**/*.trx | wc -l)
+          passed=$(grep -o 'outcome="Passed"' ./TestResults/**/*.trx | wc -l)
+          failed=$(grep -o 'outcome="Failed"' ./TestResults/**/*.trx | wc -l)
           echo "passed=$passed" >> $GITHUB_OUTPUT
           echo "failed=$failed" >> $GITHUB_OUTPUT
 
