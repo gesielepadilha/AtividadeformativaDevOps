@@ -1,4 +1,4 @@
-name: .NET Console App
+name: Action - Esteira DevOps .Net
 
 on:
   push:
@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
+  step-01-build:
     runs-on: windows-latest
     outputs:
       build-status: ${{ steps.set-status.outputs.status }}
@@ -33,9 +33,9 @@ jobs:
         run: |
           echo "status=success" >> $GITHUB_OUTPUT
 
-  run-tests:
+  step-02-run-tests:
     runs-on: windows-latest
-    needs: build
+    needs: step-01-build
     outputs:
       passed: ${{ steps.set-outputs.outputs.passed }}
       failed: ${{ steps.set-outputs.outputs.failed }}
@@ -70,9 +70,9 @@ jobs:
           echo "passed=$passed" >> $GITHUB_OUTPUT
           echo "failed=$failed" >> $GITHUB_OUTPUT
 
-  deploy:
+  step-03-deploy:
     runs-on: windows-latest
-    needs: run-tests
+    needs: step-02-run-tests
 
     steps:
       - name: Checkout
@@ -92,9 +92,9 @@ jobs:
           name: ConsoleApp
           path: ./publish
 
-  docker:
+  step-04-docker:
     runs-on: ubuntu-latest
-    needs: deploy
+    needs: step-03-deploy
 
     steps:
       - name: Checkout
@@ -114,9 +114,9 @@ jobs:
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/atividade-somativa:latest
 
-  discord:
+  step-05-discord:
     runs-on: ubuntu-latest
-    needs: [build, run-tests, deploy, docker]
+    needs: [step-01-build, step-02-run-tests, step-03-deploy, step-04-docker]
     if: always()
 
     steps:
