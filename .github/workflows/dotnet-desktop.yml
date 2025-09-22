@@ -116,9 +116,11 @@ jobs:
         with:
           webhook_url: ${{ secrets.DISCORD_WEBHOOK }}
           args: |
-            📢 Status do Workflow: ${{ needs.build.outputs.build-status }}
-            🔹 Repositório: ${{ github.repository }}
-            🔹 Branch: ${{ github.ref_name }}
-            🔹 Commit: ${{ github.sha }}
-            ✅ Testes Passados: ${{ steps.test_summary.outputs.passed }}
-            ❌ Testes Falhados: ${{ steps.test_summary.outputs.failed }}
+            Status do Workflow: ${{ needs.build.outputs.build-status }}
+            Repositório: ${{ github.repository }}
+            Branch: ${{ github.ref_name }}
+            Commit: ${{ github.sha }}
+            Testes Passados: ${{ steps.test_summary.outputs.passed }}
+            Testes Falhados: ${{ steps.test_summary.outputs.failed }}
+            Mais detalhes: [Ver workflow no GitHub](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
+            Action: [johnnyhuy/actions-discord-git-webhook](https://github.com/johnnyhuy/actions-discord-git-webhook)
