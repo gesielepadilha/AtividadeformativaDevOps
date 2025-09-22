@@ -112,10 +112,10 @@ jobs:
           echo "failed=$failed" >> $GITHUB_OUTPUT
 
       - name: Send Discord Notification
-        uses: discord/discord-webhook@v2
+        uses: johnnyhuy/actions-discord-git-webhook@main
         with:
-          webhook-url: ${{ secrets.DISCORD_WEBHOOK }}
-          content: |
+          webhook_url: ${{ secrets.DISCORD_WEBHOOK }}
+          args: |
             📢 Status do Workflow: ${{ needs.build.outputs.build-status }}
             🔹 Repositório: ${{ github.repository }}
             🔹 Branch: ${{ github.ref_name }}
