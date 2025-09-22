@@ -109,6 +109,6 @@ jobs:
               **Commit:** "${{ github.event.head_commit.message }}"
               **Testes Passados:** ${{ needs.run-tests.outputs.passed }}
               **Testes Falhados:** ${{ needs.run-tests.outputs.failed }}
-             🐳 **Docker:** Imagem publicada em ${{ secrets.DOCKER_USERNAME }}/atividade-somativa:latest
-             🔗 [Ver workflow no GitHub](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
-             ⚡ Action usada: [johnnyhuy/actions-discord-git-webhook](https://github.com/johnnyhuy/actions-discord-git-webhook)
+              **Docker:** Imagem publicada em ${{ secrets.DOCKER_USERNAME }}/atividade-somativa:latest
+              [Ver workflow no GitHub](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
+              Action usada: [johnnyhuy/actions-discord-git-webhook](https://github.com/johnnyhuy/actions-discord-git-webhook)
