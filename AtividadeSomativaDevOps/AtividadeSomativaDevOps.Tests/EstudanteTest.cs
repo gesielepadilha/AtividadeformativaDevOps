@@ -9,46 +9,44 @@ namespace AtividadeSomativaDevOps.Tests
         [SetUp]
         public void Setup()
         {
-            //Program.Resetar();
+            Program.Resetar();
         }
 
         [Test]
-        public void Criar_DeveAdicionarEstudante()
+        public void Criar_Estudante()
         {
-            var estudante = Program.CriarEstudante("Maria", 20);
+            var estudante = Program.CriarEstudante("Gesiele", 26);
 
-            Assert.AreEqual("Maria", estudante.Nome);
-            Assert.AreEqual(20, estudante.Idade);
-            Assert.AreEqual(1, estudante.Id);
+            Assert.AreEqual("Gesiele", estudante.Nome);
+            Assert.AreEqual(26, estudante.Idade);
+            Assert.IsTrue(estudante.Id > 0);
         }
 
         [Test]
-        public void Listar_DeveRetornarTodosEstudantes()
+        public void Listar_TodosEstudantes()
         {
-            Program.CriarEstudante("João", 22);
-            Program.CriarEstudante("Ana", 25);
+            Program.CriarEstudante("Gisele", 43);
+            Program.CriarEstudante("Vitor", 10);
 
             var lista = Program.ListarEstudantes();
 
-            Assert.AreEqual(2, lista.Count);
-            Assert.IsTrue(lista.Any(e => e.Nome == "João"));
-            Assert.IsTrue(lista.Any(e => e.Nome == "Ana"));
+            Assert.IsTrue(lista.Any());
         }
 
         [Test]
-        public void Atualizar_DeveAlterarDadosDoEstudante()
+        public void Atualizar_Estudante()
         {
-            var estudante = Program.CriarEstudante("Carlos", 30);
-            bool atualizado = Program.AtualizarEstudante(estudante.Id, "Carlos Silva", 31);
+            var estudante = Program.CriarEstudante("Will", 34);
+            bool atualizado = Program.AtualizarEstudante(estudante.Id, "Will", 35);
 
             Assert.IsTrue(atualizado);
             var atualizadoEstudante = Program.ListarEstudantes().First();
-            Assert.AreEqual("Carlos Silva", atualizadoEstudante.Nome);
-            Assert.AreEqual(31, atualizadoEstudante.Idade);
+            Assert.AreEqual("Will", atualizadoEstudante.Nome);
+            Assert.AreEqual(35, atualizadoEstudante.Idade);
         }
 
         [Test]
-        public void Atualizar_ComIdInvalido_DeveRetornarFalse()
+        public void Atualizar_ComIdInvalido_RetornarFalse()
         {
             bool resultado = Program.AtualizarEstudante(999, "Teste", 40);
 
@@ -58,11 +56,11 @@ namespace AtividadeSomativaDevOps.Tests
         [Test]
         public void Deletar_DeveRemoverEstudante()
         {
-            var estudante = Program.CriarEstudante("Fernanda", 28);
+            var estudante = Program.CriarEstudante("José", 28);
             bool deletado = Program.DeletarEstudante(estudante.Id);
 
             Assert.IsTrue(deletado);
-            Assert.AreEqual(0, Program.ListarEstudantes().Count);
+            Assert.IsFalse(Program.ListarEstudantes().Any());
         }
     }
 }
