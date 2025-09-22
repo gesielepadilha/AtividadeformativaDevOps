@@ -28,7 +28,28 @@ jobs:
       - name: Build
         run: dotnet build AtividadeSomativaDevOps/AtividadeSomativaDevOps.sln --configuration Release --no-restore
 
-      - name: Run Tests
+      - name: Set build status
+        id: set-status
+        run: |
+          echo "status=success" >> $GITHUB_OUTPUT
+
+  run-tests:
+    runs-on: windows-latest
+    needs: build
+    outputs:
+      passed: ${{ steps.test_summary.outputs.passed }}
+      failed: ${{ steps.test_summary.outputs.failed }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 5.0.x
+
+      - name: Run Unit Tests
         id: run-tests
         continue-on-error: true
         run: dotnet test AtividadeSomativaDevOps/AtividadeSomativaDevOps.sln --configuration Release --no-build --logger "trx;LogFileName=test-results.trx"
@@ -40,13 +61,13 @@ jobs:
           name: test-results
           path: '**/TestResults/*.trx'
 
-      - name: Set build status
-        id: set-status
+      - name: Parse Test Results
+        id: test_summary
         run: |
-          if [ ${{ steps.run-tests.outcome }} == 'success' ]; then
-            echo "status=success" >> $GITHUB_OUTPUT
-          else
-            echo "status=failure" >> $GITHUB_OUTPUT
+          passed=$(grep -oP 'outcome="Passed"' ./TestResults/**/*.trx | wc -l)
+          failed=$(grep -oP 'outcome="Failed"' ./TestResults/**/*.trx | wc -l)
+          echo "passed=$passed" >> $GITHUB_OUTPUT
+          echo "failed=$failed" >> $GITHUB_OUTPUT
 
   deploy:
     runs-on: windows-latest
@@ -61,10 +82,10 @@ jobs:
         with:
           dotnet-version: 5.0.x
 
-      - name: Publish
+      - name: Publish App
         run: dotnet publish AtividadeSomativaDevOps/AtividadeSomativaDevOps.sln --configuration Release --output ./publish
 
-      - name: Upload build artifacts
+      - name: Upload Build Artifacts
         uses: actions/upload-artifact@v4
         with:
           name: ConsoleApp
@@ -84,7 +105,7 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Build and push Docker image
+      - name: Build and Push Docker Image
         uses: docker/build-push-action@v6
         with:
           context: .
@@ -93,36 +114,22 @@ jobs:
 
   discord:
     runs-on: ubuntu-latest
-    needs: [build, deploy, docker]
+    needs: [build, run-tests, deploy, docker]
     if: always()
 
     steps:
-      - name: Download Test Results
-        uses: actions/download-artifact@v4
-        with:
-          name: test-results
-          path: ./test-results
-
-      - name: Parse TRX for test counts
-        id: test_summary
-        run: |
-          passed=$(grep -oP 'outcome="Passed"' ./test-results/**/*.trx | wc -l)
-          failed=$(grep -oP 'outcome="Failed"' ./test-results/**/*.trx | wc -l)
-          echo "passed=$passed" >> $GITHUB_OUTPUT
-          echo "failed=$failed" >> $GITHUB_OUTPUT
-
       - name: Send Discord Notification
         uses: johnnyhuy/actions-discord-git-webhook@main
         with:
           webhook_url: ${{ secrets.DISCORD_WEBHOOK }}
           args: |
-            **1 Commit**
-             ${{ github.repository }}
-             ${{ github.ref_name }}
-             ${{ github.sha }} ${{ github.event.head_commit.message }}
-             ${{ github.actor }}
-             ${{ github.event.head_commit.timestamp }}
-             Testes Passados: ${{ steps.test_summary.outputs.passed }}
-            ❌ Testes Falhados: ${{ steps.test_summary.outputs.failed }}
-            🔗 [Ver workflow no GitHub](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
-            ⚡ Action: [johnnyhuy/actions-discord-git-webhook](https://github.com/johnnyhuy/actions-discord-git-webhook)
+             **Novo Build Executado!**
+             **Repositório:** ${{ github.repository }}
+             **Branch:** ${{ github.ref_name }}
+             **Autor:** @${{ github.actor }}
+             **Commit:** "${{ github.event.head_commit.message }}"
+             **Testes Passados:** ${{ needs.run-tests.outputs.passed }}
+             **Testes Falhados:** ${{ needs.run-tests.outputs.failed }}
+             **Docker:** Imagem publicada em ${{ secrets.DOCKER_USERNAME }}/atividade-somativa:latest
+             [Ver workflow no GitHub](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
+             Action usada: [johnnyhuy/actions-discord-git-webhook](https://github.com/johnnyhuy/actions-discord-git-webhook)
