@@ -10,81 +10,110 @@ on:
 jobs:
   build:
     runs-on: windows-latest
+    outputs:
+      build-status: ${{ steps.set-status.outputs.status }}
 
     steps:
-    - name: Checkout
-      uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v4
-      with:
-        dotnet-version: 5.0.x
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 5.0.x
 
-    - name: Restore dependencies
-      run: dotnet restore AtividadeSomativaDevOps/AtividadeSomativaDevOps.sln
+      - name: Restore dependencies
+        run: dotnet restore AtividadeSomativaDevOps/AtividadeSomativaDevOps.sln
 
-    - name: Build
-      run: dotnet build AtividadeSomativaDevOps/AtividadeSomativaDevOps.sln --configuration Release --no-restore
+      - name: Build
+        run: dotnet build AtividadeSomativaDevOps/AtividadeSomativaDevOps.sln --configuration Release --no-restore
 
-    - name: Run Tests
-      run: dotnet test AtividadeSomativaDevOps/AtividadeSomativaDevOps.sln --configuration Release --no-build --logger "trx;LogFileName=test-results.trx"
+      - name: Run Tests
+        id: run-tests
+        continue-on-error: true
+        run: dotnet test AtividadeSomativaDevOps/AtividadeSomativaDevOps.sln --configuration Release --no-build --logger "trx;LogFileName=test-results.trx"
+
+      - name: Upload Test Results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: '**/TestResults/*.trx'
+
+      - name: Set build status
+        id: set-status
+        run: |
+          if [ ${{ steps.run-tests.outcome }} == 'success' ]; then
+            echo "status=success" >> $GITHUB_OUTPUT
+          else
+            echo "status=failure" >> $GITHUB_OUTPUT
+          fi
 
   deploy:
     runs-on: windows-latest
     needs: build
 
     steps:
-    - name: Checkout
-      uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v4
-      with:
-        dotnet-version: 5.0.x
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 5.0.x
 
-    - name: Publish
-      run: dotnet publish AtividadeSomativaDevOps/AtividadeSomativaDevOps.sln --configuration Release --output ./publish
+      - name: Publish
+        run: dotnet publish AtividadeSomativaDevOps/AtividadeSomativaDevOps.sln --configuration Release --output ./publish
 
-    - name: Upload build artifacts
-      uses: actions/upload-artifact@v4
-      with:
-        name: ConsoleApp
-        path: ./publish
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: ConsoleApp
+          path: ./publish
 
   docker:
     runs-on: ubuntu-latest
     needs: deploy
 
     steps:
-    - name: Checkout
-      uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
-    - name: Log in to Docker Hub
-      uses: docker/login-action@v3
-      with:
-        username: ${{ secrets.DOCKER_USERNAME }}
-        password: ${{ secrets.DOCKER_PASSWORD }}
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
 
-    - name: Build and push Docker image
-      uses: docker/build-push-action@v6
-      with:
-        context: .
-        push: true
-        tags: ${{ secrets.DOCKER_USERNAME }}/atividade-somativa:latest
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: ${{ secrets.DOCKER_USERNAME }}/atividade-somativa:latest
 
   discord:
     runs-on: ubuntu-latest
     needs: [build, deploy, docker]
     if: always()
-    environment: production 
 
     steps:
-    - name: Send Discord Notification
-      uses: Ilshidur/action-discord@master
-      with:
-        webhook: ${{ secrets.DISCORD_WEBHOOK }}
-        args: |
-          Status do Workflow: ${{ needs.build.result }}
-          Repositório: ${{ github.repository }}
-          Branch: ${{ github.ref_name }}
-          Commit: ${{ github.sha }}
+      - name: Download Test Results
+        uses: actions/download-artifact@v4
+        with:
+          name: test-results
+          path: ./test-results
+
+      - name: Parse TRX for test counts
+        id: test_summary
+        run: |
+          passed=$(grep -oP 'outcome="Passed"' ./test-results/**/*.trx | wc -l)
+          failed=$(grep -oP 'outcome="Failed"' ./test-results/**/*.trx | wc -l)
+          echo "passed=$passed" >> $GITHUB_OUTPUT
+          echo "failed=$failed" >> $GITHUB_OUTPUT
+
+      - name: Send Discord Notification
+        uses: Ilshidur/action-discord@master
+        with:
+          args: ${{ secrets.DISCORD_WEBHOOK }} 
+          
