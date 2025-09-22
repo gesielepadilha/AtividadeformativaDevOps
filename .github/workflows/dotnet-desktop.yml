@@ -108,10 +108,10 @@ jobs:
       - name: Build and Push Docker Image
         uses: docker/build-push-action@v6
         with:
-          context: .
+          context: ./AtividadeSomativaDevOps           
+          file: ./AtividadeSomativaDevOps/Dockerfile  
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/atividade-somativa:latest
-
   discord:
     runs-on: ubuntu-latest
     needs: [build, run-tests, deploy, docker]
