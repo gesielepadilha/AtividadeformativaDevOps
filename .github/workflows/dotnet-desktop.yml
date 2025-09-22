@@ -37,8 +37,8 @@ jobs:
     runs-on: windows-latest
     needs: build
     outputs:
-      passed: ${{ steps.test_summary.outputs.passed }}
-      failed: ${{ steps.test_summary.outputs.failed }}
+      passed: ${{ steps.set-outputs.outputs.passed }}
+      failed: ${{ steps.set-outputs.outputs.failed }}
 
     steps:
       - name: Checkout
@@ -61,8 +61,8 @@ jobs:
           name: test-results
           path: '**/TestResults/*.trx'
 
-      - name: Parse Test Results
-        id: test_summary
+      - name: Parse Test Results and Set Outputs
+        id: set-outputs
         run: |
           passed=$(grep -oP 'outcome="Passed"' ./TestResults/**/*.trx | wc -l)
           failed=$(grep -oP 'outcome="Failed"' ./TestResults/**/*.trx | wc -l)
@@ -109,6 +109,6 @@ jobs:
               **Commit:** "${{ github.event.head_commit.message }}"
               **Testes Passados:** ${{ needs.run-tests.outputs.passed }}
               **Testes Falhados:** ${{ needs.run-tests.outputs.failed }}
-              **Docker:** Imagem publicada em ${{ secrets.DOCKER_USERNAME }}/atividade-somativa:latest
+             🐳 **Docker:** Imagem publicada em ${{ secrets.DOCKER_USERNAME }}/atividade-somativa:latest
              🔗 [Ver workflow no GitHub](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
              ⚡ Action usada: [johnnyhuy/actions-discord-git-webhook](https://github.com/johnnyhuy/actions-discord-git-webhook)
