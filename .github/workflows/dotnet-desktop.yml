@@ -69,31 +69,9 @@ jobs:
           echo "passed=$passed" >> $GITHUB_OUTPUT
           echo "failed=$failed" >> $GITHUB_OUTPUT
 
-  deploy:
-    runs-on: windows-latest
-    needs: build
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: 5.0.x
-
-      - name: Publish App
-        run: dotnet publish AtividadeSomativaDevOps/AtividadeSomativaDevOps.sln --configuration Release --output ./publish
-
-      - name: Upload Build Artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: ConsoleApp
-          path: ./publish
-
   docker:
     runs-on: ubuntu-latest
-    needs: deploy
+    needs: run-tests
 
     steps:
       - name: Checkout
@@ -108,13 +86,14 @@ jobs:
       - name: Build and Push Docker Image
         uses: docker/build-push-action@v6
         with:
-          context: ./AtividadeSomativaDevOps           
-          file: ./AtividadeSomativaDevOps/Dockerfile  
+          context: ./AtividadeSomativaDevOps
+          file: ./AtividadeSomativaDevOps/Dockerfile
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/atividade-somativa:latest
+
   discord:
     runs-on: ubuntu-latest
-    needs: [build, run-tests, deploy, docker]
+    needs: [build, run-tests, docker]
     if: always()
 
     steps:
@@ -123,13 +102,13 @@ jobs:
         with:
           webhook_url: ${{ secrets.DISCORD_WEBHOOK }}
           args: |
-             **Novo Build Executado!**
-             **Repositório:** ${{ github.repository }}
-             **Branch:** ${{ github.ref_name }}
-             **Autor:** @${{ github.actor }}
-             **Commit:** "${{ github.event.head_commit.message }}"
-             **Testes Passados:** ${{ needs.run-tests.outputs.passed }}
-             **Testes Falhados:** ${{ needs.run-tests.outputs.failed }}
-             **Docker:** Imagem publicada em ${{ secrets.DOCKER_USERNAME }}/atividade-somativa:latest
-             [Ver workflow no GitHub](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
-             Action usada: [johnnyhuy/actions-discord-git-webhook](https://github.com/johnnyhuy/actions-discord-git-webhook)
+              **Novo Build Executado!**
+              **Repositório:** ${{ github.repository }}
+              **Branch:** ${{ github.ref_name }}
+              **Autor:** @${{ github.actor }}
+              **Commit:** "${{ github.event.head_commit.message }}"
+              **Testes Passados:** ${{ needs.run-tests.outputs.passed }}
+              **Testes Falhados:** ${{ needs.run-tests.outputs.failed }}
+              **Docker:** Imagem publicada em ${{ secrets.DOCKER_USERNAME }}/atividade-somativa:latest
+             🔗 [Ver workflow no GitHub](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
+             ⚡ Action usada: [johnnyhuy/actions-discord-git-webhook](https://github.com/johnnyhuy/actions-discord-git-webhook)
