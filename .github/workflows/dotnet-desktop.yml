@@ -47,7 +47,6 @@ jobs:
             echo "status=success" >> $GITHUB_OUTPUT
           else
             echo "status=failure" >> $GITHUB_OUTPUT
-          fi
 
   deploy:
     runs-on: windows-latest
@@ -113,7 +112,13 @@ jobs:
           echo "failed=$failed" >> $GITHUB_OUTPUT
 
       - name: Send Discord Notification
-        uses: Ilshidur/action-discord@master
+        uses: discord/discord-webhook@v2
         with:
-          args: ${{ secrets.DISCORD_WEBHOOK }} 
-          
+          webhook-url: ${{ secrets.DISCORD_WEBHOOK }}
+          content: |
+            📢 Status do Workflow: ${{ needs.build.outputs.build-status }}
+            🔹 Repositório: ${{ github.repository }}
+            🔹 Branch: ${{ github.ref_name }}
+            🔹 Commit: ${{ github.sha }}
+            ✅ Testes Passados: ${{ steps.test_summary.outputs.passed }}
+            ❌ Testes Falhados: ${{ steps.test_summary.outputs.failed }}
