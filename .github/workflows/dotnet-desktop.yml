@@ -52,21 +52,21 @@ jobs:
       - name: Run Unit Tests
         id: run-tests
         continue-on-error: true
-        run: dotnet test AtividadeSomativaDevOps/AtividadeSomativaDevOps.sln --configuration Release --no-build --logger "trx;LogFileName=test-results.trx"
+        run: dotnet test AtividadeSomativaDevOps/AtividadeSomativaDevOps.sln --configuration Release --no-build --logger "trx;LogFileName=test-results.trx" --results-directory ./test-results
 
       - name: Upload Test Results
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: test-results
-          path: '**/TestResults/*.trx'
+          path: ./test-results/*.trx
 
       - name: Parse Test Results and Set Outputs
         id: set-outputs
         shell: bash
         run: |
-          passed=$(grep -ro 'outcome="Passed"' . | wc -l)
-          failed=$(grep -ro 'outcome="Failed"' . | wc -l)
+          passed=$(grep -o 'outcome="Passed"' ./test-results/*.trx | wc -l || echo 0)
+          failed=$(grep -o 'outcome="Failed"' ./test-results/*.trx | wc -l || echo 0)
           echo "passed=$passed" >> $GITHUB_OUTPUT
           echo "failed=$failed" >> $GITHUB_OUTPUT
 
@@ -125,13 +125,13 @@ jobs:
         with:
           webhook_url: ${{ secrets.DISCORD_WEBHOOK }}
           args: |
-              **Novo Build Executado!**
-              **Repositório:** ${{ github.repository }}
-              **Branch:** ${{ github.ref_name }}
-              **Autor:** @${{ github.actor }}
-              **Commit:** "${{ github.event.head_commit.message }}"
-              **Testes Passados:** ${{ needs.run-tests.outputs.passed }}
-              **Testes Falhados:** ${{ needs.run-tests.outputs.failed }}
-              **Docker:** Imagem publicada em ${{ secrets.DOCKER_USERNAME }}/atividade-somativa:latest
-              [Ver workflow no GitHub](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
-              Action usada: [johnnyhuy/actions-discord-git-webhook](https://github.com/johnnyhuy/actions-discord-git-webhook)
+             **Pipeline executado!**
+             **Repositório:** ${{ github.repository }}
+             **Branch:** ${{ github.ref_name }}
+             **Autor:** @${{ github.actor }}
+             **Commit:** "${{ github.event.head_commit.message }}"
+             **Testes Passados:** ${{ needs.step-02-run-tests.outputs.passed }}
+             **Testes Falhados:** ${{ needs.step-02-run-tests.outputs.failed }}
+             **Docker:** Imagem publicada em `${{ secrets.DOCKER_USERNAME }}/atividade-somativa:latest`
+             [Ver workflow no GitHub](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
+             Action usada: [johnnyhuy/actions-discord-git-webhook](https://github.com/johnnyhuy/actions-discord-git-webhook)
